@@ -32,7 +32,7 @@ MIN_USERNAME_LEN = 6
 MIN_UID = 1000
 
 # Set to True to include system/service accounts.
-INCLUDE_SYSTEM_ACCOUNTS = True
+INCLUDE_SYSTEM_ACCOUNTS = False
 
 
 def is_locked_or_unset(shadow_password_field):
@@ -99,6 +99,8 @@ def main():
             locked_or_unset_accounts.append(username)
 
     # -------- Print results --------
+
+    print(f"Includes system accounts: {INCLUDE_SYSTEM_ACCOUNTS}")
 
     print(f"Users with usernames shorter than {MIN_USERNAME_LEN} characters:")
     if not short_usernames:
