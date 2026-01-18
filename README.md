@@ -15,7 +15,7 @@ These scripts are intentionally simple and meant to evolve as understanding impr
 ## What’s in this repo?
 
 * `envChk.py` – Displays basic system information such as uptime, CPU usage, and hardware metrics (where available)
-* `netmon.py` – Periodically checks Internet reachability from the application layer
+* `netmon.py` – Periodically checks connectivity using `ping` (LAN or Internet depending on target)
 * `passChk.py` – Audits local Linux user accounts using `/etc/passwd` and `/etc/shadow`
 
 ## Prerequisites
@@ -82,7 +82,8 @@ python3 netmon.py
 
 Notes:
 
-* Periodically checks Internet reachability
+* Uses `ping` to test a configured target (for example, `8.8.8.8` for Internet or your gateway IP for LAN)
+* Logs 4 pings each cycle (similar to running `ping -c 4 <host>`)
 * The sleep interval is controlled by a constant inside the script
 
 ### 3) Account audit (Linux only)
