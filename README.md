@@ -27,6 +27,22 @@ These scripts are intentionally simple and meant to evolve as understanding impr
 Note: These lab scripts primarily rely on Python’s standard library. A virtual environment
 may be used for learning and experimentation but is **not required** for the lab.
 
+## Python dependencies
+
+Some scripts use third-party Python packages (not part of the standard library). Those are
+listed in `requirements.txt`.
+
+To install the third-party packages:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+Notes:
+
+* Only third-party packages appear in `requirements.txt`.
+* Standard library modules (such as `os`, `pwd`, or `subprocess`) do not need to be installed.
+
 ## Setup (optional: virtual environment)
 
 Using a virtual environment is optional and provided here as a best-practice learning option.
