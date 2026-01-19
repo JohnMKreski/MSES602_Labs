@@ -35,11 +35,15 @@ The script was rewritten to:
 
 The script was intentionally designed to be **read-only** and non-destructive. It performs no writes and makes no system changes. When run without sufficient permissions, it exits safely with an explanatory message.
 
+![passChk.py no Sudo Output](/labs/assets/lab1/no-auth_passChk.jpg)
+
+
 ### Outcome
 
 Running the script on the server correctly identified the `nobody` account as locked/disabled, which is expected behavior on Ubuntu systems. No weak user-created accounts were detected.
 
-*(Screenshot: passChk.py output)*
+![passChk.py Output](/labs/assets/lab1/auth_passChk_systemoff.jpg)
+
 
 ---
 
@@ -63,7 +67,7 @@ To prevent leaking local network details, environment-specific values were exter
 
 The script reliably reports whether network connectivity is available and can be adapted to different environments without modifying source code.
 
-*(Screenshot: netmon.py output)*
+![netmon.py Output](/labs/assets/lab1/netmon.jpg)
 
 ---
 
@@ -93,7 +97,7 @@ Output formatting was improved to favor readability while preserving access to r
 * The script remains safe and non-invasive
 * Raw JSON output is available but optional
 
-*(Screenshot: envChk.py output)*
+![passChk.py Output](/labs/assets/lab1/envChk.jpg)
 
 ---
 
@@ -123,3 +127,18 @@ Rather than simply running provided examples, modifying and extending the script
 * Configuration management
 
 This approach aligns closely with real-world DevOps work, where learning and experimentation are critical to building reliable systems.
+
+## References
+
+- Regis University's MSES602 Repository: https://github.com/RegisUniversity/MSES602_DevOpsUtils.git
+- Python Standard Library: https://docs.python.org/3/library/
+- psutil Documentation: https://psutil.readthedocs.io/en/latest/
+- Ubuntu Server Docs: https://ubuntu.com/server/docs
+- Linux Load Average Explained: https://www.brendangregg.com/blog/2017-08-08/linux-load-averages.html
+
+## AI Additional Tools
+
+ChatGPT and Microsoft Copilot were used as supplemental tools for research, documentation review, and scripting assistance, consistent with common professional DevOps and software engineering workflows.
+
+- OpenAI, ChatGPT: https://openai.com/chatgpt
+- Microsoft Copilot: https://learn.microsoft.com/en-us/copilot/

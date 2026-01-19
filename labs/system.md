@@ -79,3 +79,16 @@ All scripts were designed to safely inspect system state without modifying confi
 ## Summary
 
 This environment was intentionally chosen to emphasize realism, safety, and learning. By working on a headless Ubuntu Server with standard system tools, the lab more accurately reflects how Python scripting is used in real DevOps and operations contexts.
+
+
+## References
+
+- Regis University's MSES602 Repository: https://github.com/RegisUniversity/MSES602_DevOpsUtils.git
+- Ubuntu Server Docs: https://ubuntu.com/server/docs
+
+## AI Additional Tools
+
+ChatGPT and Microsoft Copilot were used as supplemental tools for research, documentation review, and scripting assistance, consistent with common professional DevOps and software engineering workflows.
+
+- OpenAI, ChatGPT: https://openai.com/chatgpt
+- Microsoft Copilot: https://learn.microsoft.com/en-us/copilot/
