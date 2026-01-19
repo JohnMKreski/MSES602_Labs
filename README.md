@@ -1,7 +1,12 @@
 # MSES602 – Python Scripting (DevOps Lab)
 
-This repository contains small, beginner-friendly Python scripts created and modified
-as part of the MSES602 DevOps labs.
+This repository contains small, beginner-friendly Python scripts, modified
+as part of the [MSES602 DevOps labs](https://github.com/RegisUniversity/MSES602_DevOpsUtils.git).
+
+# Labs:
+ - [Lab 1](./labs/lab1.md)
+
+ ---
 
 The focus of this repo is on learning and experimentation rather than rigid step-following:
 
