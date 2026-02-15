@@ -7,37 +7,69 @@
     sonar_version: sonarqube-9.9.0.65466
     sonar_scanner_version: sonar-scanner-cli-4.8.0.2856-linux
     sonar_scanner_exe: sonar-scanner-4.8.0.2856-linux
+    sonar_db_user: sonar
+    sonar_db_name: sonar
+    sonar_db_password: password
+    sonar_web_host: 127.0.0.1
+    sonar_search_xms: 512m
+    sonar_search_xmx: 512m
+    sonar_web_xms: 256m
+    sonar_web_xmx: 256m
+    sonar_ce_javaOpts: -Xms256m -Xmx256m
 
   tasks:
     - name: Update repositories
       apt:
         update_cache: yes
 
-    - name: Install Java
-      package: name='openjdk-8-jre' state=latest
-
-    - name: Install Postgres
-      apt:
-        name: postgresql
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - unzip
+          - ca-certificates
+          - curl
+          - openjdk-17-jre-headless
+          - postgresql
+          - python3-psycopg2
+        state: present
         update_cache: yes
-        state: latest
+
+    - name: Ensure PostgreSQL is running
+      ansible.builtin.systemd:
+        name: postgresql
+        state: started
+        enabled: true
+
+    - name: Ensure vm.max_map_count is set for SonarQube
+      ansible.builtin.lineinfile:
+        path: /etc/sysctl.d/99-sonarqube.conf
+        line: vm.max_map_count=262144
+        create: true
+
+    - name: Reload sysctl settings
+      ansible.builtin.command: sysctl --system
+      changed_when: false
+
+    - name: Check if sonar Postgres role exists
+      ansible.builtin.command: sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ sonar_db_user }}';"
+      register: sonar_role_exists
+      changed_when: false
 
     - name: Add Sonar user to postgres
-      command: createuser sonar
-      become: true
-      become_user: postgres
-      ignore_errors: yes
+      ansible.builtin.command: sudo -u postgres createuser {{ sonar_db_user }}
+      when: sonar_role_exists.stdout | trim != '1'
 
     - name: Add sonar user password
-      command: psql -c "ALTER USER sonar WITH ENCRYPTED password 'password';"
-      become: true
-      become_user: postgres
+      ansible.builtin.command: sudo -u postgres psql -c "ALTER USER {{ sonar_db_user }} WITH ENCRYPTED password '{{ sonar_db_password }}';"
+
+    - name: Check if sonar database exists
+      ansible.builtin.command: sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ sonar_db_name }}';"
+      register: sonar_db_exists
+      changed_when: false
 
     - name: Create database
-      command: psql -c "CREATE DATABASE sonar OWNER sonar;"
-      become: true
-      become_user: postgres
-      ignore_errors: yes
+      ansible.builtin.command: sudo -u postgres psql -c "CREATE DATABASE {{ sonar_db_name }} OWNER {{ sonar_db_user }};"
+      when: sonar_db_exists.stdout | trim != '1'
 
     - name: Add sonar user and install Sonarqube
       user:
@@ -45,43 +77,59 @@
         shell: /bin/bash
 
     - name: Get SonarQube
-      get_url: 
-        url="https://binaries.sonarsource.com/Distribution/sonarqube/{{sonar_version}}.zip"
-        dest="/tmp/{{sonar_version}}.zip"
+      ansible.builtin.get_url:
+        url: "https://binaries.sonarsource.com/Distribution/sonarqube/{{ sonar_version }}.zip"
+        dest: "/tmp/{{ sonar_version }}.zip"
+        mode: '0644'
 
-    - name: Unzip sonarqube 
+    - name: Unzip SonarQube into /opt
       ansible.builtin.unarchive:
-        src: /tmp/{{sonar_version}}.zip
-        dest: /tmp
-        remote_src: yes
-
-    - name: Copy the files 
-      ansible.builtin.copy:
-        src: /tmp/{{sonar_version}} 
+        src: "/tmp/{{ sonar_version }}.zip"
         dest: /opt
         remote_src: yes
+        creates: "/opt/{{ sonar_version }}"
+
+    - name: Create /opt/sonarqube symlink
+      ansible.builtin.file:
+        src: "/opt/{{ sonar_version }}"
+        dest: /opt/sonarqube
+        state: link
 
     - name: Give ownership to the sonar user
-      command: sudo chown -R sonar:sonar /opt/{{sonar_version}}
+      ansible.builtin.file:
+        path: "/opt/{{ sonar_version }}"
+        owner: sonar
+        group: sonar
+        recurse: true
 
     - name: Add properties
       blockinfile:
-        path: /opt/{{sonar_version}}/sonar.properties
+        path: "/opt/{{ sonar_version }}/conf/sonar.properties"
         block: |
-          sonar.jdbc.username=sonar
-          sonar.jdbc.password=password
-          sonar.jdbc.url=jdbc:postgresql://localhost/sonar
-          sonar.web.host=127.0.0.1
-          sonar.search.javaOpts=-Xms512m  -Xmx512m
-        create: true
+          sonar.jdbc.username={{ sonar_db_user }}
+          sonar.jdbc.password={{ sonar_db_password }}
+          sonar.jdbc.url=jdbc:postgresql://localhost:5432/{{ sonar_db_name }}
+          sonar.web.host={{ sonar_web_host }}
+          sonar.search.javaOpts=-Xms{{ sonar_search_xms }} -Xmx{{ sonar_search_xmx }}
+          sonar.web.javaOpts=-Xms{{ sonar_web_xms }} -Xmx{{ sonar_web_xmx }}
+        create: false
+        marker: "# {mark} ANSIBLE MANAGED SONAR PROPS"
 
-    - name: Create service file
+
+    # - name: Ensure SonarQube runs as sonar (not root)
+    #   ansible.builtin.lineinfile:
+    #     path: "/opt/{{ sonar_version }}/bin/linux-x86-64/sonar.sh"
+    #     regexp: '^#?RUN_AS_USER='
+    #     line: 'RUN_AS_USER=sonar'
+    #   when: ansible_facts['architecture'] in ['x86_64', 'amd64']
+
+    - name: Install systemd unit for SonarQube
       ansible.builtin.copy:
-        src: sonar
-        dest: /etc/init.d
+        src: sonar.service
+        dest: /etc/systemd/system/sonar.service
         owner: root
         group: root
-        mode: o=rwx,g=rx,u=rx
+        mode: '0644'
 
 #    - name: Give ownership to the sonar user
 #      command: sudo chown -R root:root /etc/init.d/sonar
@@ -92,32 +140,42 @@
       # If there are issues starting the service you should check the logs at
       #  /opt/{{sonar_version}}/logs
       #  Also check the log an temp fie permissions
-    - name: Enable service and start sonarqube
-      ansible.builtin.service:
+    - name: Reload systemd units
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable service and start SonarQube
+      ansible.builtin.systemd:
         name: sonar
-        enabled: yes
+        enabled: true
         state: started
 
     - name: get sonar-scanner-cli
-      get_url:
-        url="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/{{sonar_scanner_version}}.zip"
-        dest="/tmp/{{sonar_scanner_version}}.zip"
+      ansible.builtin.get_url:
+        url: "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/{{ sonar_scanner_version }}.zip"
+        dest: "/tmp/{{ sonar_scanner_version }}.zip"
+        mode: '0644'
 
     - name: unzip sonar-scanner-cli
       ansible.builtin.unarchive:
-        src: /tmp/{{sonar_scanner_version}}.zip
-        dest: /tmp
-        remote_src: yes 
-    
-    - name: Copy sonar-scanner-cli to /opt
-      ansible.builtin.copy:
-        src: /tmp/{{sonar_scanner_exe}}
-        dest: /opt/sonar-scanner
+        src: "/tmp/{{ sonar_scanner_version }}.zip"
+        dest: /opt
         remote_src: yes
+        creates: "/opt/{{ sonar_scanner_exe }}"
+    
+    - name: Create /opt/sonar-scanner symlink
+      ansible.builtin.file:
+        src: "/opt/{{ sonar_scanner_exe }}"
+        dest: /opt/sonar-scanner
+        state: link
 
-    - name: add sonar-scanner to path
-      lineinfile:
-        path: /home/osboxes/.bashrc
-        line: export PATH=$PATH:/opt/sonar-scanner/{{sonar_scanner_exe}}/bin 
+    - name: Add sonar-scanner to PATH for all users
+      ansible.builtin.copy:
+        dest: /etc/profile.d/sonar-scanner.sh
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          export PATH="$PATH:/opt/sonar-scanner/bin"
 
 

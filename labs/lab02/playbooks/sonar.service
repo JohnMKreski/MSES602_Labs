@@ -5,12 +5,16 @@ After=syslog.target network.target
 [Service]
 Type=forking
 
-ExecStart=/opt/sonarqube-9.9.0.65466/bin/linux-x86-64/sonar.sh start
-ExecStop=/opt/sonarqube-9.9.0.65466/bin/linux-x86-64/sonar.sh stop
+ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
 
 User=sonar
 Group=sonar
-Restart=always
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65536
+LimitNPROC=4096
+TimeoutStartSec=300
 
 [Install]
 WantedBy=multi-user.target
