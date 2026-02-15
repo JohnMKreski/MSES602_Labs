@@ -10,19 +10,20 @@ Unlike Lab 2, which centered on provisioning infrastructure with Ansible, this l
 
 ## Environment and Setup
 
-* Ubuntu Server (headless)
-* Jenkins running as a systemd service (installed via Ansible in Lab 2)
-* SonarQube installed and configured in Lab 2
-* GitHub repository: `MSES602_HelloWorld`
+* [Ubuntu Server](../system.md) (headless)
+* Jenkins running as a systemd service (installed via Ansible in [Lab 2](labs/lab02/lab2.md))
+* SonarQube installed and configured from [Lab 2](labs/lab02/lab2.md)
+* Forked GitHub repository: [`MSES602_HelloWorld`](https://github.com/JohnMKreski/MSES602_HelloWorld)
+    * Original Class Repo: [`MSES602_HelloWorld`](https://github.com/RegisDevOps/MSES602_HelloWorld)
 * Node.js environment available on the Jenkins host
 
-All work was performed via SSH and Jenkins web interface access.
+All work was performed via SSH, Jenkins, and SonarQube web interface access.
 
 ---
 
-# SonarQube Installation and Playbook Adjustments (From Lab 2)
+# SonarQube Installation and Playbook Adjustments
 
-Before this CI workflow could function, SonarQube had to be installed and configured during Lab 2 using Ansible automation.
+Before this CI workflow could function, SonarQube had to be installed and configured from the Lab 2 using Ansible automation. [View SonarQube Playbook Here](labs/lab02/playbooks/sonarqube.yml)
 
 ### Playbook Enhancements
 
@@ -46,35 +47,48 @@ SonarQube was confirmed accessible at:
 ```
 http://127.0.0.1:9000
 ```
+>Curl IP Address Check
+>![sonar curl verification](assets/sonar_curl.jpg)
+>Active Service Check
+>![sonar service running](assets/sonar_running.jpg)
 
-![sonar running](assets/sonar_running.jpg)
 
 This provisioning work enabled Jenkins integration in this lab.
 
 ---
 
-# Git Commit and Triggering the Build
+# Git Push and Continuous Integration Trigger
+
+Changes were committed locally and pushed to the forked GitHub repository connected to the Jenkins job.
 
 Within the project directory:
-
 ```
-/home/osboxes/projects/MSES602_HelloWorld
+/home/serveradmin/Projects/MSES602_HelloWorld
 ```
 
-The following Git commands were executed:
+The standard Git workflow was used:
 
 ```
 git status
 git add .
-git commit -m "Change name to Bill Masters"
-git push origin master
+git commit -m "Descriptive commit message"
+git push origin master //See NOTE BELOW
 ```
 
-After pushing to GitHub, Jenkins automatically detected the change and triggered a new build.
+Once the changes were pushed to the remote repository, Jenkins detected the update through SCM polling. Because polling was configured, Jenkins periodically checked the repository for changes and automatically triggered a new build when a new commit was detected.
 
-![git commit](assets/git_commit.jpg)
+The CI pipeline then executed the configured build stages:
+* Checked out the latest revision from the remote repository
+* Installed project dependencies
+* Executed automated tests
+* Performed static code analysis using SonarQube
 
----
+This sequence demonstrates how a push to a version-controlled repository initiates an automated validation cycle. SCM polling acts as the trigger mechanism, allowing Jenkins to continuously monitor the repository and enforce build and quality checks without manual intervention.
+
+> **Note:** In this lab environment, changes were pushed directly to the `master` branch to clearly demonstrate CI automation behavior.
+> In real-world development environments, standard practice typically involves pushing changes to a feature branch and opening a Pull Request (PR). CI pipelines then execute on the PR before changes are merged into a protected `main` or `master` branch.
+>  This approach enforces code review, branch protection rules, and automated quality gates prior to integration.
+
 
 # Jenkins Build Execution
 
@@ -183,14 +197,23 @@ Jenkins builds occur inside an isolated workspace located at:
 
 The workspace contains:
 
-* Checked-out source code
-* Installed dependencies
-* Sonar scanner artifacts
-* Build-generated files
-
-Exploring this directory reinforced how Jenkins separates build environments from developer systems.
+* Checked-out source code  
+* Installed dependencies  
+* Sonar scanner artifacts  
+* Build-generated files  
+* Test output files (including `test-results.xml`)  
 
 ![workspace view](assets/workspace_view.jpg)
+
+During the build process, the file `test-results.xml` was generated within the workspace. This file logged the automated test execution results and was used by Jenkins during the **Publish JUnit test result report** stage.
+
+![test-results.xml](assets/test_results.jpg)
+
+Reviewing this file inside the workspace provided visibility into how test outcomes are recorded and how Jenkins determines build status (e.g., `SUCCESS` vs `UNSTABLE`).
+
+Exploring this directory reinforced how Jenkins separates build environments from developer systems while preserving detailed artifacts for validation and troubleshooting.
+
+
 
 ---
 
@@ -228,7 +251,9 @@ Together, Labs 2 and 3 illustrate the relationship between **provisioning tools 
 * Jenkins Documentation: [https://www.jenkins.io/doc/](https://www.jenkins.io/doc/)
 * SonarQube Documentation: [https://docs.sonarsource.com/](https://docs.sonarsource.com/)
 * Git Documentation: [https://git-scm.com/docs](https://git-scm.com/docs)
-* Node.js Documentation: [https://nodejs.org/en/docs](https://nodejs.org/en/docs)
+* Node.js v10 Documentation: [https://nodejs.org/docs/latest-v10.x/api/index.html](https://nodejs.org/docs/latest-v10.x/api/index.html)
+    * Node.js v25 Documentation: [https://nodejs.org/en/docs](https://nodejs.org/en/docs)
+
 
 ---
 

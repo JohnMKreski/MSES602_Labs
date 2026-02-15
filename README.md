@@ -6,6 +6,7 @@ Course materials and reference utilities provided by Regis University can be fou
 
 * [https://github.com/RegisUniversity/MSES602_DevOpsUtils.git](https://github.com/RegisUniversity/MSES602_DevOpsUtils.git)
 * [https://github.com/RegisUniversity/MSES602_ansible.git](https://github.com/RegisUniversity/MSES602_ansible.git)
+* [https://github.com/RegisDevOps/MSES602_HelloWorld](https://github.com/RegisDevOps/MSES602_HelloWorld)
 
 ---
 
@@ -64,6 +65,22 @@ Topics include:
 * Jenkins installation, initial configuration, and plugin review
 
 This lab highlights the difference between provisioning tools (Ansible) and continuous automation platforms (Jenkins).
+
+---
+
+## [Lab 3 - Continuous Integration with Git, Jenkins, and SonarQube](labs/lab03/lab3.md)
+
+Lab 3 builds on the provisioned Jenkins environment by implementing a basic Continuous Integration workflow triggered by Git commits.
+
+Topics include:
+
+* Git-based build triggering (SCM polling)
+* Automated dependency installation and test execution
+* Static code analysis with SonarQube
+* Build result interpretation (SUCCESS vs UNSTABLE)
+* Jenkins workspace inspection and artifact review
+
+This lab demonstrates how version control, automation servers, and quality analysis tools integrate to provide immediate feedback within a CI pipeline.
 
 ---
 
