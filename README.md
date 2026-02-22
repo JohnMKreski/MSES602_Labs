@@ -84,6 +84,23 @@ This lab demonstrates how version control, automation servers, and quality analy
 
 ---
 
+## [Lab 4 – Infrastructure Monitoring with Prometheus and Grafana](labs/lab04/lab4.md)
+
+Lab 4 focuses on implementing a self-hosted infrastructure monitoring stack on a bare-metal Ubuntu Server, emphasizing real-world deployment and operational validation over purely vendor-based research.
+
+Topics include:
+
+* Installing and configuring node_exporter for host-level metrics
+* Deploying Prometheus for metrics scraping and time-series storage
+* Integrating Grafana for visualization and dashboarding
+* Designing and validating alert rules using PromQL
+* Testing alert lifecycle transitions (Inactive → Pending → Firing → Resolved)
+* Understanding scrape intervals, evaluation timing, and multi-core CPU behavior
+
+This lab demonstrates how observability systems operate in practice, highlighting the relationship between metrics collection, alert evaluation, and operational response within a DevOps environment.
+
+---
+
 ## Supporting Scripts
 
 Reusable or general-purpose scripts may appear outside individual lab folders, such as:
