@@ -137,6 +137,8 @@ Observed metrics included:
 
 Stress testing confirmed real-time responsiveness.
 
+>![Grafana Dashboard](assets/grafana_stress_test.jpg)
+
 ---
 
 # Phase 2 – Alert Rule Implementation
@@ -161,6 +163,8 @@ groups:
           description: "CPU usage above 80% for more than 30 seconds."
 ```
 
+>![Prometheus UI](assets/prometheus_first_alert_check.jpg)
+
 For demonstration reliability, the rule was adjusted to:
 
 ```yaml
@@ -179,6 +183,7 @@ Stress testing performed using:
 ```bash
 stress-ng --cpu 4 --timeout 60s --metrics-brief
 ```
+>![Server Stress Test](assets/server_4core_stress_test.jpg)
 
 Observed state transitions:
 
@@ -192,6 +197,14 @@ This validated:
 * Rule evaluation timing
 * State transition logic
 * Interaction between scrape interval and evaluation interval
+
+## Grafana Dashboard Showing CPU Spike
+
+>![Grafana CPU Graph](assets/grafana_stress_test_15s.jpg)
+
+## Prometheus Dashboard Showing Rule Firing
+
+>![Prometheus Alert Firing](assets/prometheus_High_CPU_Firing.jpg)
 
 ---
 
