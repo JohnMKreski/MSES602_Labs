@@ -15,7 +15,7 @@ The objective was to:
 
 ## Environment
 
-* Ubuntu 20.04 (Lab Server)
+* Ubuntu 20.04 (Lab [Server](../system.md))
 * SonarQube 9.9.0.65466 (LTS)
 * sonar-scanner CLI installed and configured
 * Git installed
@@ -27,7 +27,7 @@ SonarQube was confirmed running at:
 http://localhost:9000
 ```
 
-> Insert Screenshot: SonarQube Version Page
+> ![Sonar Version](assets/sonar_scanner_v.jpg)
 
 ---
 
@@ -57,7 +57,7 @@ INFO: Analysis total time: 40.102 s
 
 The scan successfully generated and uploaded the analysis report to the SonarQube server.
 
-> Insert Screenshot: sonar-scanner Console Output
+> ![Sonar Scan Console Output](assets/sonar_init_scan_console.jpg)
 
 ---
 
@@ -78,7 +78,7 @@ sonar.sources=.
 sonar.sourceEncoding=UTF-8
 sonar.exclusions=node_modules/**
 sonar.login=admin
-sonar.password=adminSonar
+sonar.password=*******
 ```
 
 ### Analysis of Properties
@@ -95,7 +95,7 @@ sonar.password=adminSonar
 * **Encoding:** UTF-8
   Ensures proper parsing of source files.
 
-> Insert Screenshot: sonar-project.properties Output
+> ![Sonar Properties](assets/sonar_properties.jpg)
 
 ---
 
@@ -113,7 +113,11 @@ After processing, the dashboard displayed the following metrics:
 | Duplications      | 0.0%                     |
 | Duplicated Blocks | 0                        |
 
-> Insert Screenshot: SonarQube Project Dashboard
+#### SonarQube Home Dashboard
+> ![Sonar Home Dashboard](assets/sonar_init_scan_dashboard.jpg)
+
+#### SonarQube Project Dashboard
+> ![Sonar Project Dashboard](assets/sonar_init_scan_project.jpg)
 
 ---
 
@@ -162,7 +166,7 @@ Most Code Smells appeared reasonable and related to Express route handling and J
 
 Overall, the findings were appropriate for a minimally configured ExpressJS starter application.
 
-> Insert Screenshot: Security Hotspot Detail View
+> ![Project Security Hotspot](assets/sonar_init_scan_security_hotspot.jpg)
 
 ---
 

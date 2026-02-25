@@ -7,7 +7,7 @@ Course materials and reference utilities provided by Regis University can be fou
 * [https://github.com/RegisUniversity/MSES602_DevOpsUtils.git](https://github.com/RegisUniversity/MSES602_DevOpsUtils.git)
 * [https://github.com/RegisUniversity/MSES602_ansible.git](https://github.com/RegisUniversity/MSES602_ansible.git)
 * [https://github.com/RegisDevOps/MSES602_HelloWorld](https://github.com/RegisDevOps/MSES602_HelloWorld)
-
+* [https://github.com/RegisUniversity/MeanJsHelloWorld](https://github.com/RegisUniversity/MeanJsHelloWorld)
 ---
 
 ## Repository Purpose
