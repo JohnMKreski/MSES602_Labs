@@ -101,6 +101,23 @@ This lab demonstrates how observability systems operate in practice, highlightin
 
 ---
 
+## [Lab 5 – Static Analysis with SonarQube](labs/lab05/lab5.md)
+
+Lab 5 focuses on performing standalone static code analysis using SonarQube on a self-hosted Ubuntu Server environment, emphasizing manual scan execution and interpretation of quality metrics rather than CI-triggered automation.
+
+Topics include:
+
+* Verifying SonarQube installation and service availability
+* Executing `sonar-scanner` against a sample Node/Express application
+* Reviewing `sonar-project.properties` configuration
+* Analyzing Bugs, Code Smells, and Security Hotspots
+* Interpreting coverage and duplication metrics
+* Understanding rule classifications in SonarQube 9.9 LTS
+
+This lab demonstrates how static analysis provides early insight into code quality, maintainability, and potential security concerns, reinforcing the role of automated scanning within a DevOps feedback loop.
+
+---
+
 ## Supporting Scripts
 
 Reusable or general-purpose scripts may appear outside individual lab folders, such as:
